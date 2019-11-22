@@ -1605,6 +1605,10 @@ class QuantAwareTrainRangeLinearQuantizer(Quantizer):
                                                                   overrides=overrides,
                                                                   train_with_fp_copy=True)
 
+        if isinstance(model, nn.DataParallel) and len(model.device_ids) > 1:
+            raise RuntimeError('QuantAwareTrainRangeLinearQuantizer currently does not support running with '
+                               'multiple GPUs')
+
         mode = verify_quant_mode(mode)
 
         self.model.quantizer_metadata['params']['mode'] = str(mode).split('.')[1]
